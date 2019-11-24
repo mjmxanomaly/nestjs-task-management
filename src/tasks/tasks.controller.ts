@@ -7,12 +7,12 @@ export class TasksController {
   constructor(private taskService: TasksService) {}
 
   @Get()
-  getAllTasks(): Task[] {
-    return this.taskService.getAllTasks();
+  async getAllTasks(): Promise<Task[]> {
+    return await this.taskService.getAllTasks();
   }
 
   @Post()
-  createTask(@Body('title') title: string, @Body('description') description: string): Task {
-    return this.taskService.createTask(title, description);
+  async createTask(@Body('title') title: string, @Body('description') description: string): Promise<Task> {
+    return await this.taskService.createTask(title, description);
   }
 }
