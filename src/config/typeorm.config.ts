@@ -7,5 +7,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: '1Topnotchplayer',
   database: 'taskmanagement',
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
-  synchronize: true,
+  synchronize: false,
 }

@@ -1,41 +1,38 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './tasks.models';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+import { Task } from './tasks.entity';
+import { TaskStatus } from './task-status.enum';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private taskService: TasksService) {}
 
   @Get()
-  async getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Promise<Task[]> {
-    if (Object.keys(filterDto).length) {
-      return this.taskService.getTasksWithFilters(filterDto);
-    } else {
-      return await this.taskService.getAllTasks();
-    }
+  getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.taskService.getTasks(filterDto);
   }
 
   @Get('/:id')
-  async getTaskById(@Param('id') id: string): Promise<Task> {
-    return await this.taskService.getTaskById(id);
+  getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
+    return this.taskService.getTaskById(id);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return await this.taskService.createTask(createTaskDto);
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.taskService.createTask(createTaskDto);
   }
 
   @Delete('/:id')
-  async deleteTask(@Param('id') id: string): Promise<void> {
-    await this.taskService.deleteTask(id);
+  deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.taskService.deleteTask(id);
   }
 
   @Patch('/:id/status')
-  async updateTaskStatus(@Param('id') id: string, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Promise<Task> {
-    return await this.taskService.updateTaskStatus(id, status);
+  updateTaskStatus(@Param('id', ParseIntPipe) id: number, @Body('status', TaskStatusValidationPipe) status: TaskStatus): Promise<Task> {
+    return this.taskService.updateTaskStatus(id, status);
   }
 }
